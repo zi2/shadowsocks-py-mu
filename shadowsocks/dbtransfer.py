@@ -266,6 +266,10 @@ class DbTransfer(object):
                     string = ' WHERE `port`<>%d' % port
                 else:
                     string = '%s AND `port`<>%d' % (string, port)
+
+            if hasattr(config, 'GROUP'):
+                string += ' AND `group` > %d' % config.GROUP
+
             conn = cymysql.connect(host=config.MYSQL_HOST, port=config.MYSQL_PORT, user=config.MYSQL_USER,
                                    passwd=config.MYSQL_PASS, db=config.MYSQL_DB, charset='utf8')
             cur = conn.cursor()
@@ -278,7 +282,7 @@ class DbTransfer(object):
             cur.close()
             conn.close()
             if config.SS_VERBOSE:
-                logging.info('db downloaded')
+                logging.info('db downloaded, count %d' % len(rows))
             return rows
 
     @staticmethod
